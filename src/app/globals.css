@@ -1,0 +1,229 @@
+@import "tailwindcss";
+
+@theme inline {
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+@theme {
+  --color-ink: #0a0a0a;
+  --color-mist: #f3f3f3;
+  --color-fog: #ebebeb;
+  --color-forest: #17362a;
+  --color-sand: #a68f78;
+  --color-sand-ink: #85705b;
+
+  --animate-float: float 9s ease-in-out infinite;
+  --animate-word-in: word-in 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  --animate-panel-in: panel-in 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  --animate-menu-in: menu-in 0.18s ease-out both;
+  --animate-plane: plane 7s ease-in-out infinite;
+  --animate-dash: dash 1.6s linear infinite;
+
+  @keyframes float {
+    0%,
+    100% {
+      transform: translate3d(0, 0, 0);
+    }
+    50% {
+      transform: translate3d(0, -12px, 0);
+    }
+  }
+
+  @keyframes word-in {
+    from {
+      opacity: 0;
+      transform: translateY(0.35em);
+      filter: blur(6px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+      filter: none;
+    }
+  }
+
+  @keyframes panel-in {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  @keyframes menu-in {
+    from {
+      opacity: 0;
+      transform: translateY(-4px) scale(0.98);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  @keyframes plane {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-6px);
+    }
+  }
+
+  @keyframes dash {
+    to {
+      stroke-dashoffset: -24;
+    }
+  }
+}
+
+@layer base {
+  :root {
+    --header-h: 4.5rem;
+    --gutter: 1.25rem;
+  }
+
+  @media (min-width: 48rem) {
+    :root {
+      --gutter: 2rem;
+    }
+  }
+
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: calc(var(--header-h) + 1rem);
+  }
+
+  body {
+    background-color: #ffffff;
+    color: #0a0a0a;
+    font-family: var(--font-sans);
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    background-color: #0a0a0a;
+    color: #ffffff;
+  }
+
+  button:not(:disabled),
+  summary,
+  [role="tab"] {
+    cursor: pointer;
+  }
+
+  :where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+    outline: 2px solid #2f6bff;
+    outline-offset: 3px;
+  }
+}
+
+@utility site-container {
+  width: 100%;
+  max-width: 80rem;
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+/* Aligns a full-bleed scroller's first item with the page container. */
+@utility bleed-x {
+  padding-inline: max(var(--gutter), calc((100% - 80rem) / 2 + var(--gutter)));
+  scroll-padding-inline: max(var(--gutter), calc((100% - 80rem) / 2 + var(--gutter)));
+}
+
+@utility no-scrollbar {
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@utility pattern-grid {
+  background-image:
+    linear-gradient(to right, rgb(255 255 255 / 0.07) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(255 255 255 / 0.07) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+@utility pattern-dots {
+  background-image: radial-gradient(rgb(255 255 255 / 0.22) 1px, transparent 1.2px);
+  background-size: 18px 18px;
+}
+
+.hero-backdrop {
+  background:
+    radial-gradient(90% 70% at 18% 8%, rgb(44 58 160 / 0.55) 0%, transparent 60%),
+    radial-gradient(80% 70% at 88% 18%, rgb(122 38 104 / 0.5) 0%, transparent 58%),
+    radial-gradient(70% 60% at 50% 110%, rgb(22 96 110 / 0.35) 0%, transparent 70%),
+    linear-gradient(180deg, #0b0d1f 0%, #07070c 100%);
+}
+
+/* Fades the lidar scene behind the hero copy so labels never cross the text. */
+.hero-canvas-mask {
+  mask-image: linear-gradient(
+    to bottom,
+    #000 0%,
+    rgb(0 0 0 / 0.12) 26%,
+    rgb(0 0 0 / 0.12) 74%,
+    #000 100%
+  );
+}
+
+@media (min-width: 48rem) {
+  .hero-canvas-mask {
+    mask-image: radial-gradient(
+      ellipse 46% 40% at 50% 52%,
+      rgb(0 0 0 / 0.08) 0%,
+      rgb(0 0 0 / 0.22) 60%,
+      #000 100%
+    );
+  }
+}
+
+/* Scroll-linked reveal for the manifesto statement. --p is set from JS. */
+.reveal-word {
+  opacity: clamp(0.2, calc(var(--p, 1) * var(--n, 1) - var(--i, 0)), 1);
+  transition: opacity 0.2s linear;
+}
+
+/* Fade-up on first view. Only hides content when JS can reveal it again. */
+@media (scripting: enabled) and (prefers-reduced-motion: no-preference) {
+  [data-reveal] {
+    transition:
+      opacity 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) var(--reveal-delay, 0ms),
+      transform 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) var(--reveal-delay, 0ms);
+  }
+
+  [data-reveal]:not([data-revealed]) {
+    opacity: 0;
+    transform: translateY(28px);
+  }
+}
+
+[data-paused] .animate-float {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .reveal-word {
+    opacity: 1;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
